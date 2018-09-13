@@ -737,6 +737,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerVelocity: 5
   jumpSpeed: 20
+  jumpPressedRememberTime: 0.2
+  groundedRememberTime: 0.2
+  maxVelocity: 5
+  horizontalDampingWhenStopping: 0.5
+  horizontalDampingWhenTurning: 0.25
+  horizontalDamping: 0
 --- !u!50 &935949898
 Rigidbody2D:
   serializedVersion: 4
