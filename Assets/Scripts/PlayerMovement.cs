@@ -11,8 +11,8 @@ public class PlayerMovement : MonoBehaviour {
 
 	private Rigidbody2D m_rigidbody;
 	private Animator m_animator;
-	// private BoxCollider2D m_bodyCollider;
 	private BoxCollider2D m_feetCollider;
+	private SpriteRenderer m_spriteRenderer;
 
 	[Header("Jump Control")]
 	public float jumpPressedRememberTime = 0.2f;
@@ -30,12 +30,21 @@ public class PlayerMovement : MonoBehaviour {
 	public float airborneHorizontalDampingWhenTurning = 0.1f;
 	public float airborneHorizontalDamping = 0.1f;
 
+	[Header("Dash Power Up (Poder da Aeronáutica)")]
+	public Color dashColor = new Color(0, 255f, 174f, 1f);
+	public float dashVelocity = 10f;
+	private bool m_hasDashPower;
+	private bool m_canDash;
+
 	
 	void Start () {
 		m_rigidbody = GetComponent<Rigidbody2D>();
 		m_animator = GetComponent<Animator>();
 		m_feetCollider = GetComponentInChildren<BoxCollider2D>();
+		m_spriteRenderer = GetComponent<SpriteRenderer>();
 		m_isAlive = true;
+
+		m_hasDashPower = true;
 	}
 	
 	void FixedUpdate () {
@@ -96,6 +105,8 @@ public class PlayerMovement : MonoBehaviour {
 
 		if(m_feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"))) {
 			m_groundedRemember = groundedRememberTime;
+			m_canDash = true;
+			m_spriteRenderer.color = Color.white;
 		}
 
 		m_jumpPressedRemember -= Time.fixedDeltaTime;
@@ -118,6 +129,18 @@ public class PlayerMovement : MonoBehaviour {
 			Vector2 t_currentVelocity = m_rigidbody.velocity;
 			t_currentVelocity.y = jumpSpeed;
 			m_rigidbody.velocity = t_currentVelocity;
+		} else if(m_hasDashPower && (m_jumpPressedRemember > 0) && m_canDash) {
+			Debug.Log("Dashing!");
+			m_jumpPressedRemember = 0f;
+			m_groundedRemember = 0f;
+			
+			m_canDash = false;
+			m_spriteRenderer.color = dashColor;
+
+			Vector2 dashSpeed = new Vector2(Mathf.Sign(m_rigidbody.velocity.x) * dashVelocity, 0f);
+			Debug.Log(dashSpeed);
+
+			m_rigidbody.velocity = dashSpeed;
 		}
 
 	}
