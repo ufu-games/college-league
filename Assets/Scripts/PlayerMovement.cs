@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour {
 	
 	[Header("Move Control")]
 	public float maxVelocity = 5f;
+	private float m_maxVelocity;
 	public float horizontalDampingWhenStopping = 0.75f;
 	public float horizontalDampingWhenTurning = 0.25f;
 	public float horizontalDamping = 0.5f;
@@ -33,8 +34,10 @@ public class PlayerMovement : MonoBehaviour {
 	[Header("Dash Power Up (Poder da Aeronáutica)")]
 	public Color dashColor = new Color(0, 255f, 174f, 1f);
 	public float dashVelocity = 10f;
+	public float dashGravity = 0.5f;
 	private bool m_hasDashPower;
 	private bool m_canDash;
+	private float m_originalGravity;
 
 	
 	void Start () {
@@ -43,15 +46,19 @@ public class PlayerMovement : MonoBehaviour {
 		m_feetCollider = GetComponentInChildren<BoxCollider2D>();
 		m_spriteRenderer = GetComponent<SpriteRenderer>();
 		m_isAlive = true;
-
 		m_hasDashPower = true;
+		m_maxVelocity = maxVelocity;
+		m_originalGravity = m_rigidbody.gravityScale;
 	}
 	
 	void FixedUpdate () {
 		if(!m_isAlive) return;
 
+		Debug.Log(m_canDash);
+
 		Run();
 		Jump();
+		Dash();
 		FlipSprite();
 		AnimationLogic();	
 	}
@@ -105,21 +112,25 @@ public class PlayerMovement : MonoBehaviour {
 
 		if(m_feetCollider.IsTouchingLayers(LayerMask.GetMask("Ground"))) {
 			m_groundedRemember = groundedRememberTime;
-			m_canDash = true;
 			m_spriteRenderer.color = Color.white;
+			m_canDash = false;
 		}
 
 		m_jumpPressedRemember -= Time.fixedDeltaTime;
 		m_groundedRemember -= Time.fixedDeltaTime;
 
-		if(Input.GetKeyDown(KeyCode.Space)) {
+		if(Input.GetKeyDown(KeyCode.E)) {
 			m_jumpPressedRemember = jumpPressedRememberTime;
 		}
 
-		if(Input.GetKeyUp(KeyCode.Space)) {
+		if(Input.GetKeyUp(KeyCode.E)) {
 			if(m_rigidbody.velocity.y > 0) {
 				m_rigidbody.velocity = new Vector2(m_rigidbody.velocity.x, m_rigidbody.velocity.y * cutJumpHeight);
 			}
+		}
+
+		if(Mathf.Abs(m_rigidbody.velocity.y) > Mathf.Epsilon) {
+			m_canDash = true;
 		}
 
 		if((m_jumpPressedRemember > 0) && (m_groundedRemember > 0)) {
@@ -129,18 +140,31 @@ public class PlayerMovement : MonoBehaviour {
 			Vector2 t_currentVelocity = m_rigidbody.velocity;
 			t_currentVelocity.y = jumpSpeed;
 			m_rigidbody.velocity = t_currentVelocity;
-		} else if(m_hasDashPower && (m_jumpPressedRemember > 0) && m_canDash) {
-			Debug.Log("Dashing!");
-			m_jumpPressedRemember = 0f;
-			m_groundedRemember = 0f;
-			
-			m_canDash = false;
+		}
+	}
+
+	private IEnumerator DisableGravityFor(float time) {
+		m_rigidbody.gravityScale = dashGravity;
+		maxVelocity = dashVelocity;
+		yield return new WaitForSeconds(time);
+		m_rigidbody.gravityScale = m_originalGravity;
+		maxVelocity = m_maxVelocity;
+	}
+
+	private void Dash() {
+		if(!m_canDash) return;
+
+		if(Input.GetKeyDown(KeyCode.Q)) {
+			StartCoroutine(DisableGravityFor(0.25f));
+
 			m_spriteRenderer.color = dashColor;
+			float horizontalMovement = Input.GetAxisRaw("Horizontal");
+			float verticalMovement = Input.GetAxisRaw("Vertical");
+			if(horizontalMovement == 0 && verticalMovement == 0) horizontalMovement = Mathf.Sign(transform.localScale.x);
 
-			Vector2 dashSpeed = new Vector2(Mathf.Sign(m_rigidbody.velocity.x) * dashVelocity, 0f);
-			Debug.Log(dashSpeed);
+			m_rigidbody.velocity = new Vector2(horizontalMovement * dashVelocity, verticalMovement * dashVelocity);
 
-			m_rigidbody.velocity = dashSpeed;
+			m_canDash = false;
 		}
 
 	}
