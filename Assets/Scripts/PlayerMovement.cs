@@ -99,7 +99,7 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	private void AnimationLogic() {
-		if(m_rigidbody.velocity.y > 0) {
+		if(Mathf.Abs(m_rigidbody.velocity.y) > 0) {
 			m_animator.Play("Jumping");
 		} else if(Mathf.Abs(m_rigidbody.velocity.x) > Mathf.Epsilon) {
 			m_animator.Play("Running");
@@ -166,6 +166,5 @@ public class PlayerMovement : MonoBehaviour {
 
 			m_canDash = false;
 		}
-
 	}
 }

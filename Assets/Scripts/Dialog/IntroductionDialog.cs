@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class IntroductionDialog : MonoBehaviour {
 
@@ -12,7 +13,6 @@ public class IntroductionDialog : MonoBehaviour {
 	bool m_canPress;
 
 	void Start () {
-		// StartCoroutine(PlayDialog());
 		m_myAudioSource = GetComponent<AudioSource>();
 		EvaluateState(m_currentState);
 	}
@@ -30,17 +30,17 @@ public class IntroductionDialog : MonoBehaviour {
 				StartCoroutine(RenderPlace("13 de Setembro de 2023\nQuarto da Damires"));
 			break;
 			case 1:
-				StartCoroutine(RenderDialog("Ah... O que eu não faria para ter um Sugar Daddy igual ao Roberval."));
+				StartCoroutine(RenderDialog("Ah... O que eu nao faria para ter um Sugar Daddy igual ao Roberval."));
 			break;
 			case 2:
-				StartCoroutine(RenderDialog("Eu não aguento mais perder minha série só para ouvir 'Você só fez sua obrigação'..."));
+				StartCoroutine(RenderDialog("Eu nao aguento mais perder minha serie so para ouvir 'Voce so fez sua obrigacao'..."));
 			break;
 			case 3:
 				WriteText.instance.ActivatePanels(false, false);
 				SoundManager.instance.PlaySfx(messageBeep);
 			break;
 			case 4:
-				StartCoroutine(RenderDialog("EITA! O Pabllo Vittar liberou o Lula da prisão junto da Gretchen."));
+				StartCoroutine(RenderDialog("EITA! O Pabllo Vittar liberou o Lula da prisao junto da Gretchen."));
 			break;
 			case 5:
 				StartCoroutine(RenderDialog("Agora ele foi longe demais!!!"));
@@ -52,7 +52,7 @@ public class IntroductionDialog : MonoBehaviour {
 			case 7:
 				Camera.main.GetComponent<Screenshake>().ShakeScreen(0.1f);
 				m_myAudioSource.PlayOneShot(shockSfx);
-				StartCoroutine(RenderDialog("Yuke!!!"));
+				StartCoroutine(RenderDialog("Y uke!!!"));
 			break;
 			case 8:
 				StartCoroutine(ReprovouRoutine());
@@ -67,6 +67,9 @@ public class IntroductionDialog : MonoBehaviour {
 				Camera.main.GetComponent<Screenshake>().ShakeScreen(0.1f);
 				m_myAudioSource.PlayOneShot(shockSfx);
 				StartCoroutine(RenderDialog("O Sol das 15."));
+			break;
+			case 12:
+				SceneManager.LoadScene("DialogoProfessor");
 			break;
 			default:
 				WriteText.instance.ActivatePanels(false, false);
@@ -106,11 +109,5 @@ public class IntroductionDialog : MonoBehaviour {
 		m_canPress = false;
 		yield return StartCoroutine(WriteText.instance.RenderTextRoutine(text));
 		m_canPress = true;
-	}
-
-	private IEnumerator PlayDialog() {
-		yield return null;
-		// yield return StartCoroutine(RenderTextRoutine("Vou ter que enfrentar meu pior inimigo!"));
-		// yield return StartCoroutine(RenderTextRoutine("O Sol das 15."));
 	}
 }
