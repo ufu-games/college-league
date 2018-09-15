@@ -23,6 +23,9 @@ public class WriteText : MonoBehaviour {
 	public AudioClip blipFemale;
 	public AudioClip blipMale;
 	private AudioSource m_audioSource;
+	public GameObject damiresPanel;
+	public GameObject professorPanel;
+
 
 	
 	void Awake() {
@@ -31,6 +34,8 @@ public class WriteText : MonoBehaviour {
 		} else {
 			Destroy(gameObject);
 		}
+
+		damiresPanel.SetActive(false);
 	}
 
 	public IEnumerator RenderTextRoutine(string text) {
@@ -74,5 +79,13 @@ public class WriteText : MonoBehaviour {
 	public void ActivatePanels(bool dialogPanel, bool placePanel) {
 		DialogPanel.SetActive(dialogPanel);
 		PlacePanel.SetActive(placePanel);
+	}
+
+	public void ActivateDamires(bool status = true) {
+		damiresPanel.SetActive(status);
+	}
+
+	public void ActivatedProfessor(bool status = true) {
+		professorPanel.SetActive(status);
 	}
 }

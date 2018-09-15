@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour {
 
@@ -46,9 +47,10 @@ public class PlayerMovement : MonoBehaviour {
 		m_feetCollider = GetComponentInChildren<BoxCollider2D>();
 		m_spriteRenderer = GetComponent<SpriteRenderer>();
 		m_isAlive = true;
-		m_hasDashPower = true;
 		m_maxVelocity = maxVelocity;
 		m_originalGravity = m_rigidbody.gravityScale;
+
+		m_hasDashPower = true;
 	}
 	
 	void FixedUpdate () {
@@ -152,7 +154,7 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	private void Dash() {
-		if(!m_canDash) return;
+		if(!m_canDash || !m_hasDashPower) return;
 
 		if(Input.GetKeyDown(KeyCode.Q)) {
 			StartCoroutine(DisableGravityFor(0.25f));
@@ -165,6 +167,17 @@ public class PlayerMovement : MonoBehaviour {
 			m_rigidbody.velocity = new Vector2(horizontalMovement * dashVelocity, verticalMovement * dashVelocity);
 
 			m_canDash = false;
+		}
+	}
+
+	void OnTriggerEnter2D(Collider2D other) {
+		if(other.tag == "jetpack") {
+			m_hasDashPower = true;
+			Destroy(other.gameObject);
+		}
+
+		if(other.tag == "reload") {
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		}
 	}
 }

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - boundary
   - enemy
+  - jetpack
+  - reload
   layers:
   - Default
   - TransparentFX
@@ -51,4 +53,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 2482259251
+    locked: 0
+  - name: jetpack
+    uniqueID: 290198327
     locked: 0

@@ -30,26 +30,31 @@ public class IntroductionDialog : MonoBehaviour {
 				StartCoroutine(RenderPlace("13 de Setembro de 2023\nQuarto da Damires"));
 			break;
 			case 1:
+				WriteText.instance.ActivateDamires(true);
 				StartCoroutine(RenderDialog("Ah... O que eu nao faria para ter um Sugar Daddy igual ao Roberval."));
 			break;
 			case 2:
 				StartCoroutine(RenderDialog("Eu nao aguento mais perder minha serie so para ouvir 'Voce so fez sua obrigacao'..."));
 			break;
 			case 3:
+			WriteText.instance.ActivateDamires(false);
 				WriteText.instance.ActivatePanels(false, false);
 				SoundManager.instance.PlaySfx(messageBeep);
 			break;
 			case 4:
+			WriteText.instance.ActivateDamires(true);
 				StartCoroutine(RenderDialog("EITA! O Pabllo Vittar liberou o Lula da prisao junto da Gretchen."));
 			break;
 			case 5:
 				StartCoroutine(RenderDialog("Agora ele foi longe demais!!!"));
 			break;
 			case 6:
+			WriteText.instance.ActivateDamires(false);
 				WriteText.instance.ActivatePanels(false, false);
 				SoundManager.instance.PlaySfx(messageBeep);
 			break;
 			case 7:
+			WriteText.instance.ActivateDamires(true);
 				Camera.main.GetComponent<Screenshake>().ShakeScreen(0.1f);
 				m_myAudioSource.PlayOneShot(shockSfx);
 				StartCoroutine(RenderDialog("Y uke!!!"));
