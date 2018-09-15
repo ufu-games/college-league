@@ -8,6 +8,7 @@ TagManager:
   - enemy
   - jetpack
   - reload
+  - acabou
   layers:
   - Default
   - TransparentFX

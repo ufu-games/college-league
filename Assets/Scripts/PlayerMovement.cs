@@ -242,6 +242,10 @@ public class PlayerMovement : MonoBehaviour {
 		if(other.tag == "reload") {
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		}
+
+		if(other.tag == "acabou") {
+			SceneManager.LoadScene("Acabou");
+		}
 		
 		if (other.gameObject.CompareTag ("enemy")) {
 			StartCoroutine(this.KnockBack(0.02f,400));

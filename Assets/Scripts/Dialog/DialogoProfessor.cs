@@ -152,7 +152,7 @@ public class DialogoProfessor : MonoBehaviour {
 				StartCoroutine(RenderDialog("Beleza professor! Eu juro que nao vou te desapontar pela quinta vez."));
 			break;
 			case 26:
-				SceneManager.LoadScene("SceneTutu");
+				SceneManager.LoadScene("NovaScene");
 			break;
 			default:
 				WriteText.instance.ActivatePanels(false, false);
