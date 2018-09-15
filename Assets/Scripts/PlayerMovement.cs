@@ -39,6 +39,9 @@ public class PlayerMovement : MonoBehaviour {
 	private bool m_canDash;
 	private float m_originalGravity;
 
+	public bool knocking = false;
+	private bool invencivel = false;
+
 	
 	void Start () {
 		m_rigidbody = GetComponent<Rigidbody2D>();
@@ -60,7 +63,10 @@ public class PlayerMovement : MonoBehaviour {
 		Jump();
 		Dash();
 		FlipSprite();
-		AnimationLogic();	
+		AnimationLogic();
+
+		if (knocking)
+			this.m_rigidbody.velocity = new Vector2 (this.m_rigidbody.velocity.x, this.m_rigidbody.velocity.y);
 	}
 
 	private void Run() {
@@ -165,6 +171,70 @@ public class PlayerMovement : MonoBehaviour {
 			m_rigidbody.velocity = new Vector2(horizontalMovement * dashVelocity, verticalMovement * dashVelocity);
 
 			m_canDash = false;
+		}
+	}
+
+	
+
+	public void takeDamage(int d){
+		if (!invencivel) {
+			setInvencivel ();
+		}
+	}
+
+
+	public void setInvencivel(){
+		invencivel = true;
+		this.gameObject.layer = 2;
+		// GameObject.Find("FeetCollider").layer = 2;
+		StartCoroutine (tempoInvencivel());
+
+	}
+	public IEnumerator tempoInvencivel(){
+		float timer = 0;
+
+		yield return new WaitForSeconds (0.1f);
+		while (timer < 2) {
+			gameObject.GetComponent<SpriteRenderer>().enabled = false;
+			yield return new WaitForSeconds (0.1f);
+			gameObject.GetComponent<SpriteRenderer>().enabled = true;
+			yield return new WaitForSeconds (0.2f);
+
+			timer+=0.3f;
+		}
+		gameObject.GetComponent<SpriteRenderer> ().enabled = true;
+		this.gameObject.layer = 0;
+		// GameObject.Find("FeetCollider").layer = 0;
+		invencivel = false;
+	}
+	
+
+	public IEnumerator KnockBack(float knockDuration, float knockPower){
+		float timer = 0;
+
+		m_rigidbody.velocity = new Vector2 (0, 0);
+
+		if(!invencivel){
+			knocking = true;
+			while(knockDuration > timer){
+				timer+=Time.deltaTime;
+
+				if (true){
+					m_rigidbody.AddForce(new Vector2( -200, knockPower));
+				}
+				else{
+					m_rigidbody.AddForce(new Vector2( 200, knockPower));
+				}
+			}
+		}
+
+		yield return 0;	
+	}
+
+	void OnTriggerEnter2D(Collider2D other){
+		if (other.gameObject.CompareTag ("enemy")) {
+			StartCoroutine(this.KnockBack(0.02f,400));
+			this.takeDamage(1);
 		}
 	}
 }
