@@ -12,11 +12,16 @@ public class WriteText : MonoBehaviour {
 	public float dialogEndDelay = 2.0f;
 	public GameObject DialogPanel;
 	public GameObject PlacePanel;
+	public GameObject DialogOK;
+	public GameObject PlaceOK;
 
 	[Header("Sound Clips")]
 	public AudioClip keyboardSound;
 	public AudioClip whatsappMessage;
 	public AudioClip mobileSound;
+	public AudioClip typewriterSfx;
+	public AudioClip blipFemale;
+	public AudioClip blipMale;
 	private AudioSource m_audioSource;
 
 	
@@ -28,72 +33,32 @@ public class WriteText : MonoBehaviour {
 		}
 	}
 
-	void Start() {
-		m_audioSource = GetComponent<AudioSource>();
-		StartCoroutine(PlayDialog());
-	}
-	
-	private IEnumerator PlayDialog() {
-		m_audioSource.clip = keyboardSound;
-
-		yield return StartCoroutine(RenderPlaceRoutine("13 de Setembro de 2023\nQuarto da Damires"));
-
-		m_audioSource.clip = mobileSound;
-
-		yield return StartCoroutine(RenderTextRoutine("Ah, o que eu não faria para ter um sugar daddy igual ao Roberval."));
-		yield return StartCoroutine(RenderTextRoutine("Eu não aguento mais perder minhas férias para ouvir 'Você só fez sua obrigação!!'"));
-
-		// abrulho do whatsapp
-		yield return StartCoroutine(PlayAudioWithDelay(whatsappMessage));
-		
-
-		yield return StartCoroutine(RenderTextRoutine("EITA! O Pablo Vittar liberou o Lula da prisão junto com a Gretchen."));
-		yield return StartCoroutine(RenderTextRoutine("Agora ele foi longe demais!!!"));
-
-		// abrulho do whatsapp
-		yield return StartCoroutine(PlayAudioWithDelay(whatsappMessage));
-
-		m_audioSource.clip = keyboardSound;
-		yield return StartCoroutine(RenderTextRoutine("E O QQQQQQQQQQ"));
-		yield return StartCoroutine(RenderTextRoutine("Esse paquiderme me reprovou por 1 décimo!?"));
-
-		yield return StartCoroutine(RenderTextRoutine("Vou ter que enfrentar meu pior inimigo!"));
-		yield return StartCoroutine(RenderTextRoutine("O Sol das 15."));
-	}
-
-	private IEnumerator PlayAudioWithDelay(AudioClip audio) {
-		m_audioSource.PlayOneShot(audio);
-		yield return new WaitForSeconds(dialogEndDelay);
-	}
-
-	private IEnumerator RenderTextRoutine(string text) {
+	public IEnumerator RenderTextRoutine(string text) {
 		ActivatePanels(true, false);
+		DialogOK.SetActive(false);
 		screenText.text = "";
-		m_audioSource.Play();
+
 		for(int i = 0; i < text.Length; i++) {
 			screenText.text += text[i];
+			SoundManager.instance.PlaySfx(blipFemale);
 			yield return new WaitForSeconds(letterDelay);
 		}
-
-		m_audioSource.Stop();
-
-		yield return new WaitForSeconds(dialogEndDelay);
-		ActivatePanels(false, false);
+		// yield return new WaitForSeconds(dialogEndDelay);
+		DialogOK.SetActive(true);
+		
 	}
 
-	private IEnumerator RenderPlaceRoutine(string text) {
+	public IEnumerator RenderPlaceRoutine(string text) {
 		ActivatePanels(false, true);
+		PlaceOK.SetActive(false);
 		placeText.text = "";
-		m_audioSource.Play();
 		for(int i = 0; i < text.Length; i++) {
 			placeText.text += text[i];
+			SoundManager.instance.PlaySfx(typewriterSfx);
 			yield return new WaitForSeconds(letterDelay);
 		}
-		
-		m_audioSource.Stop();
-
-		yield return new WaitForSeconds(dialogEndDelay);
-		ActivatePanels(false, false);
+		// yield return new WaitForSeconds(dialogEndDelay);
+		PlaceOK.SetActive(true);
 	}
 
 	public void RenderTextOnScreen(string text) {
